@@ -1,0 +1,12 @@
+{
+  "name": "study-notes",
+  "dockerComposeFile": "compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  "forwardPorts": [5173, 8080],
+
+  "customizations": {
+    "vscode": {}
+  }
+}
