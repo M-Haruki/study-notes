@@ -7,6 +7,11 @@
   "forwardPorts": [5173, 8080],
 
   "customizations": {
-    "vscode": {}
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
   }
 }
