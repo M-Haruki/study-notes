@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+*:focus {
+  outline: none;
+}
+:root {
+  font-family: "Noto Sans JP", "sans-serif", "serif";
+  overflow: hidden;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
