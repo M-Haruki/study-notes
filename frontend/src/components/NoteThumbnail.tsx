@@ -6,6 +6,7 @@ export default function NoteThumbnail({ note }: { note: Note }) {
     <Link to={"/detail/" + note.id}>
       <div>
         <p>{note.title}</p>
+        <p>{note.date}</p>
       </div>
     </Link>
   );

@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Index from "./pages/Index";
 import List from "./pages/List";
 import Detail from "./pages/Detail";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/" element={<Index />} />
         <Route path="/list" element={<List />} />
         <Route path="/detail/:id" element={<Detail />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
