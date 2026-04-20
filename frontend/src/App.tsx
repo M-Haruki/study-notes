@@ -11,12 +11,14 @@ export default function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/list" element={<List />} />
-        <Route path="/detail/:id" element={<Detail />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div id="page">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/list" element={<List />} />
+          <Route path="/detail/:id" element={<Detail />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }

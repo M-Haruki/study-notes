@@ -8,6 +8,7 @@ export default function Header() {
         <h1>Study Notes</h1>
       </Link>
       <a
+        className={styles.link}
         href="https://github.com/M-Haruki/study-notes"
         target="_blank"
         rel="noopener noreferrer"

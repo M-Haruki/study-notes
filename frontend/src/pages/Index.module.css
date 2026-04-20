@@ -1,0 +1,12 @@
+.startbtn {
+  margin: auto;
+  padding: 10px;
+  width: 150px;
+  background-color: var(--color-sub);
+  display: flex;
+  vertical-align: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 20px;
+}

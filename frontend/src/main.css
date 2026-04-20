@@ -1,3 +1,10 @@
+:root {
+  --color-main: #ade4ff;
+  --color-sub: #59c8ff;
+  --color-back: #f2fbff;
+  --color-body: #303030;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -16,4 +23,14 @@ html,
 body {
   height: 100%;
   width: 100%;
+  background-color: var(--color-back);
+}
+
+a {
+  color: var(--color-body);
+  text-decoration: none;
+}
+
+#page {
+  padding: 10px 20px;
 }

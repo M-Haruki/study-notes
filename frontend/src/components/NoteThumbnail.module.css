@@ -1,0 +1,19 @@
+.note {
+  display: block;
+  border: 1px solid var(--color-sub);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+}
+.note:hover {
+  background-color: var(--color-main);
+}
+
+.noteTitle {
+  font-size: 1.5rem;
+}
+.noteDate {
+  margin-left: auto;
+  font-size: 1rem;
+}
