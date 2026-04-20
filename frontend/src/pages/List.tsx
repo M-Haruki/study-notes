@@ -1,6 +1,6 @@
 import { load, createNote } from "../utils/storage";
 import NoteThumbnail from "../components/NoteThumbnail";
-import styles from "./List.module.css";
+import styles from "./List.module.scss";
 import { useNavigate } from "react-router-dom";
 
 export default function List() {
@@ -16,7 +16,9 @@ export default function List() {
   return (
     <>
       <h1>メモ一覧</h1>
-      <div onClick={newNote}>新規作成</div>
+      <div onClick={newNote} className="btn">
+        新規作成
+      </div>
       <div className={styles.notes}>{noteDoms}</div>
     </>
   );

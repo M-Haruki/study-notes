@@ -34,3 +34,21 @@ a {
 #page {
   padding: 10px 20px;
 }
+
+.btn {
+  display: flex;
+  background-color: var(--color-main);
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  max-width: 100px;
+  padding: 10px;
+  width: 150px;
+  display: flex;
+  vertical-align: center;
+  justify-content: center;
+}
+.btn:hover {
+  background-color: var(--color-sub);
+}

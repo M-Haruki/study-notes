@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import styles from "./Index.module.css";
+import styles from "./Index.module.scss";
 export default function Index() {
   return (
     <>
@@ -8,7 +8,7 @@ export default function Index() {
         <br />
         ReactとGoの勉強用に作成されました。
       </p>
-      <Link to="/list" className={styles.startbtn}>
+      <Link to="/list" className="btn">
         始める
       </Link>
     </>

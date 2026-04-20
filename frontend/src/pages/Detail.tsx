@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { loadNote, updateNote, deleteNote } from "../utils/storage";
 import { useState } from "react";
+import styles from "./Detail.module.scss";
 
 export default function Detail() {
   const navigate = useNavigate();
@@ -22,15 +23,22 @@ export default function Detail() {
   }
   return (
     <>
-      <Link to="/list">戻る</Link>
-      <div onClick={deleteNote_}>削除</div>
-      <br />
-      <p>{note.date}</p>
+      <div className={styles.bar}>
+        <Link to="/list" className="btn">
+          戻る
+        </Link>
+        <p>{note.date}</p>
+      </div>
       <input type="text" value={note.title} onChange={onChangeTitle} />
-      <br />
       <textarea value={note.content} onChange={onChangeContent} />
-      <br />
-      <button onClick={saveNote}>Save</button>
+      <div className={styles.bar}>
+        <div onClick={saveNote} className="btn">
+          Save
+        </div>
+        <div onClick={deleteNote_} className="btn">
+          削除
+        </div>
+      </div>
     </>
   );
 }

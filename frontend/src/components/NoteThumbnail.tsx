@@ -1,6 +1,6 @@
 import type { Note } from "../types";
 import { Link } from "react-router-dom";
-import styles from "./NoteThumbnail.module.css";
+import styles from "./NoteThumbnail.module.scss";
 
 export default function NoteThumbnail({ note }: { note: Note }) {
   return (
