@@ -56,7 +56,7 @@ export default function Detail() {
         <Link to="/list" className={styles.btn}>
           戻る
         </Link>
-        <p>{note?.date}</p>
+        <p>最終更新 {note?.date}</p>
       </div>
       <div className={styles.content}>
         <input
