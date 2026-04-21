@@ -1,12 +1,25 @@
 import type { Note } from "../types";
 
 const storageId = "notes";
+const init: Note[] = [
+  {
+    id: generateID(6),
+    title: "ようこそ",
+    date: getDate(),
+    content:
+      "これはシンプルなメモアプリです。\n自動保存ではないので、内容を書き換えたら忘れずに保存をしましょう。",
+  },
+];
 
 export function load() {
   if (!localstorageAvailable) alert("localstorage is anavilable");
   const notesJson = localStorage.getItem(storageId);
-  if (!notesJson) return [];
-  return JSON.parse(notesJson) as Note[];
+  if (notesJson) {
+    return JSON.parse(notesJson) as Note[];
+  } else {
+    save(init);
+    return init;
+  }
 }
 
 function save(notes: Note[]) {
@@ -19,7 +32,6 @@ export function loadNote(id: string) {
 }
 
 export function updateNote(newNote: Note): Note {
-  console.log("saves");
   const notes = load();
   const index = notes.findIndex((note) => note.id === newNote.id);
   if (index === -1) return newNote;
@@ -49,22 +61,6 @@ export function deleteNote(id: string) {
   notes.splice(index, 1);
   save(notes);
 }
-
-// sample date
-// [
-//   {
-//     "id": "qwertyuio",
-//     "title": "sample memo",
-//     "date": "2026-4-17-22:25",
-//     "content": "hogehoge"
-//   },
-//   {
-//     "id": "oiuytr",
-//     "title": "example memo",
-//     "date": "2026-4-17-22:26",
-//     "content": "piyopiyo"
-//   }
-// ]
 
 function localstorageAvailable() {
   let storage;
