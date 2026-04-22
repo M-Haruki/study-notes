@@ -19,9 +19,9 @@ export default function List() {
     <>
       <div className={styles.front}>
         <h1>メモ一覧</h1>
-        <div onClick={newNote} className={styles.new}>
+        <button onClick={newNote} className={styles.new}>
           作成
-        </div>
+        </button>
       </div>
       <div className={styles.notes}>{noteDoms}</div>
     </>

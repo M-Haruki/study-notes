@@ -37,12 +37,12 @@ export default function Detail() {
     setNote((prev) => ({ ...prev, content: event.target.value }));
     setIsDirty(true);
   }
-  function saveNote() {
+  function doSaveNote() {
     const saved = updateNote(note);
     setNote(saved);
     setIsDirty(false);
   }
-  function deleteNote_() {
+  function doDeleteNote() {
     if (!confirm("削除しますか?")) return;
     deleteNote(id);
     flushSync(() => {
@@ -72,12 +72,12 @@ export default function Detail() {
         />
       </div>
       <div className={styles.bar}>
-        <div onClick={saveNote} className={styles.btn}>
+        <button onClick={doSaveNote} className={styles.btn} disabled={!isDirty}>
           保存
-        </div>
-        <div onClick={deleteNote_} className={styles.btn}>
+        </button>
+        <button onClick={doDeleteNote} className={styles.btn}>
           削除
-        </div>
+        </button>
       </div>
     </>
   );
