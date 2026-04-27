@@ -11,7 +11,8 @@
       "extensions": [
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "clinyong.vscode-css-modules"
+        "clinyong.vscode-css-modules",
+        "golang.go"
       ]
     }
   }
