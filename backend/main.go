@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
@@ -13,28 +11,19 @@ import (
 func main() {
 	e := echo.New()
 	e.Pre(addSlashToTopPath)
-	e.Pre(middleware.AddTrailingSlash())
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	g := e.Group("/study-notes")
 
-	// e.Filesystem = os.DirFS(".")
 	api := g.Group("/api")
 
-	// test
-	api.GET("/", func(c *echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	//
-
-	//
-	RegisterList(api)
-	//
+	// backend
+	RegisterNoteRoutes(api.Group("/note"))
 
 	// frotend
-	g.GET("/*", func(c *echo.Context) error {
-		path := "./dist/" + c.Param("*")
+	g.GET("*", func(c *echo.Context) error {
+		path := "./dist" + c.Param("*")
 		path = strings.TrimRight(path, "/")
-		fmt.Println(path)
 		if _, err := os.Stat(path); err == nil {
 			return c.File(path)
 		}

@@ -4,26 +4,32 @@ import "time"
 
 // クライアントに送る概要データ
 type NoteSummary struct {
-	ID        string    `json:"id"`
+	Id        string    `json:"id"`
 	Title     string    `json:"title"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // クライアントに送る詳細データ
 type NoteDetail struct {
-	NoteSummary
+	Id        string    `json:"id"`
+	Title     string    `json:"title"`
 	Content   string    `json:"content"`
+	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 // DBの完全なデータ
 type Note struct {
-	NoteDetail
-	UserID string `json:"-"`
+	UserId    string    `json:"-"`
+	Id        string    `json:"-"`
+	Title     string    `json:"-"`
+	Content   string    `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	CreatedAt time.Time `json:"-"`
 }
 
 type User struct {
-	ID           string    `json:"-"`
+	Id           string    `json:"-"`
 	PasswordHash string    `json:"-"`
 	CreatedAt    time.Time `json:"-"`
 }

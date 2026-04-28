@@ -12,7 +12,8 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "clinyong.vscode-css-modules",
-        "golang.go"
+        "golang.go",
+        "humao.rest-client"
       ]
     }
   }
