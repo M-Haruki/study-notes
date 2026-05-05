@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"net/http"
 	"os"
 	"strings"
 
@@ -13,12 +15,34 @@ func main() {
 	e.Pre(addSlashToTopPath)
 	e.Pre(middleware.RemoveTrailingSlash())
 
-	g := e.Group("/study-notes")
+	// db
+	db, err := newDB()
+	if err != nil {
+		e.Logger.Error("failed to connect database", "error", err)
+	}
+	defer db.Close()
+	if err := setupDatabase(context.Background(), db); err != nil {
+		e.Logger.Error("failed to setup database", "error", err)
+	}
+	usersDB := NewUsersDB(db)
+	notesDB := NewNotesDB(db)
 
+	// echo
+	g := e.Group("/study-notes")
 	api := g.Group("/api")
 
+	// temp
+	api.POST("/testdata", func(c *echo.Context) error {
+		userID, _ := usersDB.Create(c.Request().Context(), "xxxxx")
+		notesDB.Create(c.Request().Context(), userID)
+		notesDB.Create(c.Request().Context(), userID)
+		return c.JSON(http.StatusOK, map[string]string{
+			"id": userID.String(),
+		})
+	})
+
 	// backend
-	RegisterNoteRoutes(api.Group("/note"))
+	RegisterNoteRoutes(api.Group("/note"), notesDB)
 
 	// frotend
 	g.GET("*", func(c *echo.Context) error {

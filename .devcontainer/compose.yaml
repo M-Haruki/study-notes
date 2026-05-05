@@ -19,7 +19,7 @@ services:
     image: postgres:16-alpine
     environment:
       - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=notes
+      - POSTGRES_DB=study-notes
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:

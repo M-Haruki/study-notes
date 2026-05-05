@@ -1,76 +1,106 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v5"
 )
 
-var sampleSummaries = []NoteSummary{
-	{
-		Id:        "note-001",
-		Title:     "Hello",
-		UpdatedAt: time.Date(2026, 4, 27, 9, 0, 0, 0, time.UTC),
-	},
-	{
-		Id:        "note-002",
-		Title:     "Goメモ",
-		UpdatedAt: time.Date(2026, 4, 27, 10, 30, 0, 0, time.UTC),
-	},
-}
-
-var sampleDetail = NoteDetail{
-	Id:        "note-001",
-	Title:     "Hello",
-	Content:   "hogehoge",
-	UpdatedAt: time.Date(2026, 4, 27, 9, 0, 0, 0, time.UTC),
-	CreatedAt: time.Date(2026, 4, 27, 9, 0, 0, 0, time.UTC),
-}
-
 // 登録用公開関数
-func RegisterNoteRoutes(g *echo.Group) {
-	g.GET("/list", serveNotesList)
-	g.POST("/new", createNewNote)
-	g.GET("", serveNote)
-	g.PATCH("", updateNote)
-	g.DELETE("", deleteNote)
-}
-
-// 各エンドポイント
-func serveNotesList(c *echo.Context) error {
-	fmt.Println("note list")
-	return c.JSON(http.StatusOK, sampleSummaries)
-}
-func createNewNote(c *echo.Context) error {
-	type response struct {
-		Id string `json:"id"`
-	}
-	return c.JSON(http.StatusOK, response{
-		Id: "idddd",
+func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
+	g.GET("/list", func(c *echo.Context) error {
+		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		notes, err := notesDB.GetNotes(c.Request().Context(), userID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		}
+		type response struct {
+			ID        string    `json:"id"`
+			Title     string    `json:"title"`
+			UpdatedAt time.Time `json:"updated_at"`
+		}
+		res := make([]response, len(notes))
+		for i, n := range notes {
+			res[i] = response{ID: n.NoteID.String(), Title: n.Title, UpdatedAt: n.UpdatedAt}
+		}
+		return c.JSON(http.StatusOK, res)
 	})
-}
-func serveNote(c *echo.Context) error {
-	id := c.QueryParam("id")
-	fmt.Println("note detail" + id)
-	return c.JSON(http.StatusOK, sampleDetail)
-}
-func updateNote(c *echo.Context) error {
-	type request struct {
-		Title   string `json:"title"`
-		Content string `json:"content"`
-	}
-	id := c.QueryParam("id")
-	u := new(request)
-	if err := c.Bind(u); err != nil {
-		return err
-	}
-	fmt.Println("update note", id, u)
-	return c.NoContent(200)
-}
-func deleteNote(c *echo.Context) error {
-	id := c.QueryParam("id")
-	fmt.Println("delete", id)
-	return c.NoContent(200)
+
+	g.GET("", func(c *echo.Context) error {
+		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		noteID, err := uuid.Parse(c.QueryParam("id"))
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
+		}
+		note, err := notesDB.GetNote(c.Request().Context(), NoteKey{UserID: userID, NoteID: noteID})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		}
+		type resoponse struct {
+			ID        string    `json:"id"`
+			Title     string    `json:"title"`
+			Content   string    `json:"content"`
+			UpdatedAt time.Time `json:"updated_at"`
+			CreatedAt time.Time `json:"created_at"`
+		}
+		res := resoponse{
+			ID:        note.NoteID.String(),
+			Title:     note.Title,
+			Content:   note.Content,
+			UpdatedAt: note.UpdatedAt,
+			CreatedAt: note.CreatedAt,
+		}
+		return c.JSON(http.StatusOK, res)
+	})
+
+	g.POST("/new", func(c *echo.Context) error {
+		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		noteID, err := notesDB.Create(c.Request().Context(), userID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		}
+		type response struct {
+			ID string `json:"id"`
+		}
+		res := response{
+			ID: noteID.String(),
+		}
+		return c.JSON(http.StatusOK, res)
+	})
+
+	g.PATCH("", func(c *echo.Context) error {
+		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		noteID, err := uuid.Parse(c.QueryParam("id"))
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
+		}
+		type request struct {
+			Title   string `json:"title"`
+			Content string `json:"content"`
+		}
+		req := new(request)
+		if err := c.Bind(req); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
+		}
+		err = notesDB.Update(c.Request().Context(), NoteUpdateInput{UserID: userID, NoteID: noteID, Title: req.Title, Content: req.Content})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "note not found")
+		}
+		return c.NoContent(http.StatusOK)
+	})
+
+	g.DELETE("", func(c *echo.Context) error {
+		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		noteID, err := uuid.Parse(c.QueryParam("id"))
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
+		}
+		err = notesDB.Delete(c.Request().Context(), NoteKey{UserID: userID, NoteID: noteID})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "note not found")
+		}
+		return c.NoContent(http.StatusNoContent)
+	})
 }
