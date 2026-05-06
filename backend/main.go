@@ -2,18 +2,60 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
 
+type Config struct {
+	JwtSecret        string
+	JwtCookieName    string
+	JwtExpires       time.Duration
+	ContextUserIDKey string
+	IsProduction     bool
+}
+
+var AppConfig Config
+
 func main() {
+	// env
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(".env not found")
+	}
+	AppConfig = Config{
+		JwtCookieName:    "token",
+		ContextUserIDKey: "ContextUserIDKey",
+		JwtExpires:       24 * time.Hour,
+		JwtSecret:        os.Getenv("JWT_SECRET"),
+	}
+	if AppConfig.JwtSecret == "" {
+		log.Fatal("JWT_SECRET is empty")
+	}
+	if os.Getenv("ENV") == "development" {
+		AppConfig.IsProduction = false
+	}
+	switch os.Getenv("ENV") {
+	case "production":
+		AppConfig.IsProduction = true
+	case "development":
+		AppConfig.IsProduction = false
+	default:
+		log.Fatal("ENV is empty")
+	}
+
+	// echo init
 	e := echo.New()
-	e.Pre(addSlashToTopPath)
+	e.Pre(middle_addSlashToTopPath)
 	e.Pre(middleware.RemoveTrailingSlash())
+	// e.Use(middleware.Recover())
 
 	// db
 	db, err := newDB()
@@ -27,22 +69,19 @@ func main() {
 	usersDB := NewUsersDB(db)
 	notesDB := NewNotesDB(db)
 
-	// echo
+	// routing
 	g := e.Group("/study-notes")
 	api := g.Group("/api")
 
-	// temp
-	api.POST("/testdata", func(c *echo.Context) error {
-		userID, _ := usersDB.Create(c.Request().Context(), "xxxxx")
-		notesDB.Create(c.Request().Context(), userID)
-		notesDB.Create(c.Request().Context(), userID)
-		return c.JSON(http.StatusOK, map[string]string{
-			"id": userID.String(),
-		})
-	})
-
 	// backend
-	RegisterNoteRoutes(api.Group("/note"), notesDB)
+	api_note := api.Group("/note")
+	api_note.Use(middle_auth)
+	api_user := api.Group("/user")
+	api_user.Use(middle_auth)
+	api_auth := api.Group("/auth")
+	RegisterNoteRoutes(api_note, notesDB) // ログイン必須
+	RegisterUserRoutes(api_user, usersDB) // ログイン必須
+	RegisterAuthRoutes(api_auth, usersDB) // ログイン不要
 
 	// frotend
 	g.GET("*", func(c *echo.Context) error {
@@ -63,7 +102,7 @@ func main() {
 // フロントエンドのルートだけ、スラッシュがなければリダイレクトする
 // (フロントの仕組み上スラッシュなしではレンダリングに失敗する)
 // https://echo.labstack.com/docs/cookbook/middleware
-func addSlashToTopPath(next echo.HandlerFunc) echo.HandlerFunc {
+func middle_addSlashToTopPath(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		p := c.Request().URL.Path
 		if p == "/study-notes" {
@@ -71,4 +110,34 @@ func addSlashToTopPath(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		return next(c)
 	}
+}
+
+func middle_auth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c *echo.Context) error {
+		// cookie
+		cookie, err := c.Cookie(AppConfig.JwtCookieName)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+		}
+		tokenString := cookie.Value
+		// jwt
+		claims := &JwtClaims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (any, error) {
+			if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+				return nil, fmt.Errorf("unexpected signing method: %s", t.Method.Alg())
+			}
+			return []byte(AppConfig.JwtSecret), nil
+		})
+		if err != nil || !token.Valid {
+			return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+		}
+		// set
+		c.Set(AppConfig.ContextUserIDKey, claims.UserID)
+		return next(c)
+	}
+}
+
+type JwtClaims struct {
+	UserID string `json:"sub"`
+	jwt.RegisteredClaims
 }

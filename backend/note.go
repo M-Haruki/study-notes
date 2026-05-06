@@ -11,7 +11,10 @@ import (
 // 登録用公開関数
 func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 	g.GET("/list", func(c *echo.Context) error {
-		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
 		notes, err := notesDB.GetNotes(c.Request().Context(), userID)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNotFound, "user not found")
@@ -29,7 +32,10 @@ func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 	})
 
 	g.GET("", func(c *echo.Context) error {
-		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
 		noteID, err := uuid.Parse(c.QueryParam("id"))
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
@@ -56,7 +62,10 @@ func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 	})
 
 	g.POST("/new", func(c *echo.Context) error {
-		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
 		noteID, err := notesDB.Create(c.Request().Context(), userID)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNotFound, "user not found")
@@ -71,7 +80,10 @@ func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 	})
 
 	g.PATCH("", func(c *echo.Context) error {
-		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
 		noteID, err := uuid.Parse(c.QueryParam("id"))
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
@@ -92,7 +104,10 @@ func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 	})
 
 	g.DELETE("", func(c *echo.Context) error {
-		userID, _ := uuid.Parse(c.QueryParam("uid")) // 将来廃止予定のためエラーは省略
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
 		noteID, err := uuid.Parse(c.QueryParam("id"))
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid noteid")
