@@ -18,7 +18,7 @@
     }
   },
   "mounts": [
-    "source=${localEnv:USERPROFILE}\\.gitconfig-signing,target=/root/.gitconfig-signing,type=bind"
+    "source=${localEnv:USERPROFILE}\\.gitconfig,target=/root/.gitconfig,type=bind,readonly"
   ],
-  "postCreateCommand": "git config --global include.path ~/.gitconfig-signing"
+  "postCreateCommand": "git config --local core.autocrlf input"
 }
