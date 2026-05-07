@@ -11,9 +11,51 @@ import (
 )
 
 func RegisterUserRoutes(g *echo.Group, usersDB UsersDB) {
-	g.POST("/logout", func(c *echo.Context) error { return nil })
-	g.PATCH("/password", func(c *echo.Context) error { return nil })
-	g.DELETE("", func(c *echo.Context) error { return nil })
+	g.POST("/logout", func(c *echo.Context) error {
+		setLogoutCookie(c)
+		return c.NoContent(http.StatusOK)
+	})
+	g.PATCH("/password", func(c *echo.Context) error {
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
+		// get
+		type request struct {
+			Password string `json:"password"` // 8~32バイト 文字種制限なし
+		}
+		req := new(request)
+		if err := c.Bind(req); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
+		}
+		// valid
+		if !checkUserInfo(userID, req.Password) {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid format")
+		}
+		// hash
+		passwordHash, err := hashPassword(req.Password)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid password format")
+		}
+		// save
+		err = usersDB.ChangePasswordHash(c.Request().Context(), userID, passwordHash)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid")
+		}
+		return c.NoContent(http.StatusOK)
+	})
+	g.DELETE("", func(c *echo.Context) error {
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
+		err = usersDB.Delete(c.Request().Context(), userID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed")
+		}
+		setLogoutCookie(c)
+		return c.NoContent(http.StatusOK)
+	})
 }
 
 func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB) {
@@ -81,15 +123,16 @@ func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB) {
 			return echo.NewHTTPError(http.StatusInternalServerError, "auth failed")
 		}
 		// cookie
-		cookie := new(http.Cookie)
-		cookie.Path = "/study-notes"
-		cookie.Name = AppConfig.JwtCookieName
-		cookie.Value = tokenString
-		cookie.Expires = exp
-		cookie.HttpOnly = AppConfig.IsProduction // XSS 対策：JavaScript からアクセス不可
-		cookie.Secure = true                     // HTTPS 通信のみ
-		cookie.SameSite = http.SameSiteLaxMode   // CSRF 対策
-		c.SetCookie(cookie)
+		cookie := http.Cookie{
+			Path:     "/study-notes",
+			Name:     AppConfig.JwtCookieName,
+			Value:    tokenString,
+			Expires:  exp,
+			HttpOnly: AppConfig.IsProduction, // XSS 対策：JavaScript からアクセス不可
+			Secure:   true,                   // HTTPS 通信のみ
+			SameSite: http.SameSiteLaxMode,   // CSRF 対策
+		}
+		c.SetCookie(&cookie)
 		return c.NoContent(http.StatusOK)
 	})
 }
@@ -116,4 +159,17 @@ func checkUserInfo(userID string, password string) bool {
 		return false
 	}
 	return true
+}
+
+func setLogoutCookie(c *echo.Context) {
+	cookie := http.Cookie{
+		Path:     "/study-notes",
+		Name:     AppConfig.JwtCookieName,
+		Value:    "",
+		MaxAge:   -1,
+		HttpOnly: AppConfig.IsProduction, // XSS 対策：JavaScript からアクセス不可
+		Secure:   true,                   // HTTPS 通信のみ
+		SameSite: http.SameSiteLaxMode,   // CSRF 対策
+	}
+	c.SetCookie(&cookie)
 }
