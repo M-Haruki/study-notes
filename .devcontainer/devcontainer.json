@@ -16,5 +16,9 @@
         "humao.rest-client"
       ]
     }
-  }
+  },
+  "mounts": [
+    "source=${localEnv:USERPROFILE}\\.gitconfig-signing,target=/root/.gitconfig-signing,type=bind"
+  ],
+  "postCreateCommand": "git config --global include.path ~/.gitconfig-signing"
 }
