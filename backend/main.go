@@ -25,6 +25,11 @@ type Config struct {
 
 var AppConfig Config
 
+type JwtClaims struct {
+	UserID string `json:"sub"`
+	jwt.RegisteredClaims
+}
+
 func main() {
 	// env
 	if err := godotenv.Load(); err != nil {
@@ -135,9 +140,4 @@ func middle_auth(next echo.HandlerFunc) echo.HandlerFunc {
 		c.Set(AppConfig.ContextUserIDKey, claims.UserID)
 		return next(c)
 	}
-}
-
-type JwtClaims struct {
-	UserID string `json:"sub"`
-	jwt.RegisteredClaims
 }
