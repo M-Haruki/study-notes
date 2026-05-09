@@ -16,9 +16,5 @@
         "humao.rest-client"
       ]
     }
-  },
-  "mounts": [
-    "source=${localEnv:USERPROFILE}\\.gitconfig,target=/root/.gitconfig,type=bind,readonly"
-  ],
-  "postCreateCommand": "git config --local core.autocrlf input"
+  }
 }

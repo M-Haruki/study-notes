@@ -4,7 +4,7 @@ import styles from "./NoteThumbnail.module.scss";
 
 export default function NoteThumbnail({ note }: { note: Note }) {
   return (
-    <Link className={styles.note} to={"/detail/" + note.id}>
+    <Link className={styles.note} to={"/note/detail/" + note.id}>
       <p className={styles.noteTitle}>{note.title}</p>
       <p className={styles.noteDate}>{note.date}</p>
     </Link>

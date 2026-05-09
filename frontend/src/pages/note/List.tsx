@@ -1,5 +1,5 @@
-import { load, createNote } from "../utils/storage";
-import NoteThumbnail from "../components/NoteThumbnail";
+import { load, createNote } from "../../utils/storage";
+import NoteThumbnail from "../../components/NoteThumbnail";
 import styles from "./List.module.scss";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +12,7 @@ export default function List() {
   const navigate = useNavigate();
   function newNote() {
     const note = createNote();
-    navigate(`/detail/${note.id}`);
+    navigate(`/note/detail/${note.id}`);
   }
 
   return (

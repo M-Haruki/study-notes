@@ -10,6 +10,12 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
+    proxy: {
+      "/study-notes/api": {
+        target: "http://localhost:1323", // Goサーバーのアドレス
+        changeOrigin: true,
+      },
+    },
   },
   base: "/study-notes/",
 });

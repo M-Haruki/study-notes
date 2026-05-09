@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate, useBlocker } from "react-router-dom";
-import { loadNote, updateNote, deleteNote } from "../utils/storage";
+import { loadNote, updateNote, deleteNote } from "../../utils/storage";
 import { useState, useEffect } from "react";
 import styles from "./Detail.module.scss";
 import { flushSync } from "react-dom";
@@ -24,7 +24,7 @@ export default function Detail() {
   }, [blocker]);
   useEffect(() => {
     if (!note) {
-      navigate("/list");
+      navigate("/note/list");
       return;
     }
   }, [navigate, note]);
@@ -48,12 +48,12 @@ export default function Detail() {
     flushSync(() => {
       setIsDirty(false);
     });
-    navigate("/list");
+    navigate("/note/list");
   }
   return (
     <>
       <div className={styles.bar}>
-        <Link to="/list" className={styles.btn}>
+        <Link to="/note/list" className={styles.btn}>
           戻る
         </Link>
         <p>最終更新 {note?.date}</p>
