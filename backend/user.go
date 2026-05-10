@@ -11,6 +11,19 @@ import (
 )
 
 func RegisterUserRoutes(g *echo.Group, usersDB UsersDB) {
+	g.GET("/userid", func(c *echo.Context) error {
+		userID, err := GetUser(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "auth failed")
+		}
+		type resoponse struct {
+			UserID string `json:"user_id"`
+		}
+		res := resoponse{
+			UserID: userID,
+		}
+		return c.JSON(http.StatusOK, res)
+	})
 	g.POST("/logout", func(c *echo.Context) error {
 		setLogoutCookie(c)
 		return c.NoContent(http.StatusOK)
@@ -133,7 +146,14 @@ func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB) {
 			SameSite: http.SameSiteLaxMode,   // CSRF 対策
 		}
 		c.SetCookie(&cookie)
-		return c.NoContent(http.StatusOK)
+		// response
+		type resoponse struct {
+			UserID string `json:"user_id"`
+		}
+		res := resoponse{
+			UserID: req.UserID,
+		}
+		return c.JSON(http.StatusOK, res)
 	})
 }
 

@@ -4,8 +4,38 @@
   align-items: center;
   padding: 10px 20px;
   background-color: var(--color-main);
-}
 
-.link:hover {
-  text-decoration: underline;
+  .userLabel {
+    font-size: 1.2rem;
+    margin: 0 auto 0 20px;
+    span,
+    a {
+      cursor: pointer;
+    }
+    &:not(:hover) div {
+      display: none;
+    }
+    &:hover {
+      div {
+        font-size: 1.1rem;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-back);
+        border: 1px solid var(--color-sub);
+        border-radius: 10px;
+        padding: 8px;
+        gap: 5px;
+        a:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .link {
+    font-size: 1.2rem;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
