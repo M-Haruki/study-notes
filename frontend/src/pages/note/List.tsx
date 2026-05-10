@@ -25,15 +25,14 @@ export default function List() {
         setNotes(
           data.map((d) => {
             return {
-              id: d.id,
-              title: d.title,
+              ...d,
               updated_at: new Date(d.updated_at),
             };
           }),
         );
       })
       .catch(() => {
-        alert("データの取得に失敗しました。");
+        alert("ノートの取得に失敗しました。");
         navigate("/user/login");
       });
   }, [setNotes, navigate]);

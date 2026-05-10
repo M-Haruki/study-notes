@@ -84,9 +84,9 @@ func main() {
 	api_user := api.Group("/user")
 	api_user.Use(middle_auth)
 	api_auth := api.Group("/auth")
-	RegisterNoteRoutes(api_note, notesDB) // ログイン必須
-	RegisterUserRoutes(api_user, usersDB) // ログイン必須
-	RegisterAuthRoutes(api_auth, usersDB) // ログイン不要
+	RegisterNoteRoutes(api_note, notesDB)          // ログイン必須
+	RegisterUserRoutes(api_user, usersDB)          // ログイン必須
+	RegisterAuthRoutes(api_auth, usersDB, notesDB) // ログイン不要
 
 	// frotend
 	g.GET("*", func(c *echo.Context) error {

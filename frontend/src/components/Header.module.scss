@@ -11,11 +11,15 @@
     span,
     a {
       cursor: pointer;
+      margin: 0 10px;
     }
-    &:not(:hover) div {
+
+    div {
       display: none;
     }
-    &:hover {
+
+    &:hover,
+    &.show {
       div {
         font-size: 1.1rem;
         position: absolute;

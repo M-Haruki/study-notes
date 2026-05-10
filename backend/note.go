@@ -96,11 +96,25 @@ func RegisterNoteRoutes(g *echo.Group, notesDB NotesDB) {
 		if err := c.Bind(req); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
 		}
-		err = notesDB.Update(c.Request().Context(), NoteUpdateInput{UserID: userID, NoteID: noteID, Title: req.Title, Content: req.Content})
+		note, err := notesDB.Update(c.Request().Context(), NoteUpdateInput{UserID: userID, NoteID: noteID, Title: req.Title, Content: req.Content})
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNotFound, "note not found")
 		}
-		return c.NoContent(http.StatusOK)
+		type resoponse struct {
+			ID        string    `json:"id"`
+			Title     string    `json:"title"`
+			Content   string    `json:"content"`
+			UpdatedAt time.Time `json:"updated_at"`
+			CreatedAt time.Time `json:"created_at"`
+		}
+		res := resoponse{
+			ID:        note.NoteID.String(),
+			Title:     note.Title,
+			Content:   note.Content,
+			UpdatedAt: note.UpdatedAt,
+			CreatedAt: note.CreatedAt,
+		}
+		return c.JSON(http.StatusOK, res)
 	})
 
 	g.DELETE("", func(c *echo.Context) error {

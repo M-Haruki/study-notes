@@ -71,7 +71,7 @@ func RegisterUserRoutes(g *echo.Group, usersDB UsersDB) {
 	})
 }
 
-func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB) {
+func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB, notesDB NotesDB) {
 	g.POST("/new", func(c *echo.Context) error {
 		// get
 		type request struct {
@@ -96,6 +96,12 @@ func RegisterAuthRoutes(g *echo.Group, usersDB UsersDB) {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid userid") // useridの重複か
 		}
+		// first note
+		err = notesDB.CreateDefault(c.Request().Context(), req.UserID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create initialize note")
+		}
+		// return
 		return c.NoContent(http.StatusOK)
 	})
 	g.POST("/login", func(c *echo.Context) error {

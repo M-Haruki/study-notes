@@ -85,7 +85,8 @@ type UsersDB interface {
 
 type NotesDB interface {
 	Create(ctx context.Context, userID string) (uuid.UUID, error)
-	Update(ctx context.Context, noteInput NoteUpdateInput) error
+	CreateDefault(ctx context.Context, userID string) error
+	Update(ctx context.Context, noteInput NoteUpdateInput) (*Note, error)
 	Delete(ctx context.Context, noteInput NoteKey) error
 	GetNote(ctx context.Context, noteInput NoteKey) (*Note, error)
 	GetNotes(ctx context.Context, userID string) ([]NoteSmall, error)
@@ -109,8 +110,8 @@ func NewNotesDB(db *sqlx.DB) NotesDB {
 
 // user
 func (d *usersDB) Create(ctx context.Context, userID string, passwordHash string) error {
-	const query = "INSERT INTO users (user_id, password_hash) VALUES ($1, $2) RETURNING user_id"
-	err := d.db.GetContext(ctx, &userID, query, userID, passwordHash)
+	const query = "INSERT INTO users (user_id, password_hash) VALUES ($1, $2)"
+	_, err := d.db.ExecContext(ctx, query, userID, passwordHash)
 	return err
 }
 
@@ -161,20 +162,17 @@ func (d *notesDB) Create(ctx context.Context, userID string) (uuid.UUID, error) 
 	return noteID, err
 }
 
-func (d *notesDB) Update(ctx context.Context, noteInput NoteUpdateInput) error {
-	const query = "UPDATE notes SET title = $1, content = $2, updated_at = NOW() WHERE user_id = $3 AND note_id = $4"
-	res, err := d.db.ExecContext(ctx, query, noteInput.Title, noteInput.Content, noteInput.UserID, noteInput.NoteID)
-	if err != nil {
-		return err
-	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if rows == 0 {
-		return fmt.Errorf("not found")
-	}
-	return nil
+func (d *notesDB) CreateDefault(ctx context.Context, userID string) error {
+	const query = "INSERT INTO notes (user_id, title, content) VALUES ($1, 'ようこそ', 'これはシンプルなメモアプリです。\n自動保存ではないので、内容を書き換えたら忘れずに保存をしましょう。')"
+	_, err := d.db.ExecContext(ctx, query, userID)
+	return err
+}
+
+func (d *notesDB) Update(ctx context.Context, noteInput NoteUpdateInput) (*Note, error) {
+	const query = "UPDATE notes SET title = $1, content = $2, updated_at = NOW() WHERE user_id = $3 AND note_id = $4 RETURNING *"
+	var note Note
+	err := d.db.GetContext(ctx, &note, query, noteInput.Title, noteInput.Content, noteInput.UserID, noteInput.NoteID)
+	return &note, err
 }
 
 func (d *notesDB) Delete(ctx context.Context, noteInput NoteKey) error {

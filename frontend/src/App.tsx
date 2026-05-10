@@ -1,10 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import { useUserStore } from "./stores/userStore";
 import apiClient from "./lib/axios";
 import { useEffect } from "react";
 
 export default function App() {
+  const location = useLocation();
   const setUserID = useUserStore((s) => s.setUserID);
   useEffect(() => {
     apiClient
@@ -22,7 +23,7 @@ export default function App() {
   }, [setUserID]);
   return (
     <>
-      <Header />
+      <Header key={location.key} />
       <div id="page">
         <Outlet />
       </div>

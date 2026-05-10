@@ -1,8 +1,9 @@
 export interface Note {
   id: string;
   title: string;
-  date: string;
   content: string;
+  updated_at: Date;
+  created_at: Date;
 }
 
 export interface NoteSmall {
