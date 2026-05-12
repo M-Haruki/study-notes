@@ -1,3 +1,4 @@
 dist
 *.http
 .env
+study-notes
