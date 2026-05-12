@@ -1,3 +1,4 @@
+import styles from "./Form.module.scss";
 export function PasswordInput({
   label,
   name,
@@ -18,9 +19,14 @@ export function PasswordInput({
     // event.target.reportValidity();
   }
   return (
-    <div>
+    <div className={styles.input}>
       <label htmlFor="password">{label}</label>
-      <input name={name} type="password" onChange={handleChange} />
+      <input
+        name={name}
+        placeholder="8~32バイト"
+        type="password"
+        onChange={handleChange}
+      />
     </div>
   );
 }

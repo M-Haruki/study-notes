@@ -3,6 +3,7 @@ import apiClient from "../../lib/axios";
 import { useUserStore } from "../../stores/userStore";
 import { UserIDInput } from "../../components/form/UserID";
 import { SubmitBtn } from "../../components/form/SubmitBtn";
+import styles from "./Form.module.scss";
 
 export default function User_Delete() {
   const navigate = useNavigate();
@@ -30,8 +31,9 @@ export default function User_Delete() {
   }
   return (
     <>
-      <form onSubmit={submit}>
-        <UserIDInput label="ユーザーID" name="user_id" />
+      <h1>アカウント削除</h1>
+      <form onSubmit={submit} className={styles.form}>
+        <UserIDInput label="ユーザーID(確認)" name="user_id" />
         <SubmitBtn label="削除" />
       </form>
     </>

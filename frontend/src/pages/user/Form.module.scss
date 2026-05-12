@@ -1,0 +1,14 @@
+.form {
+  margin: 0 auto;
+  width: 80%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  a {
+    text-decoration: underline;
+    font-size: 1.2rem;
+    margin: 0 auto;
+  }
+}

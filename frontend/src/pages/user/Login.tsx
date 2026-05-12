@@ -4,6 +4,7 @@ import { PasswordInput } from "../../components/form/Password";
 import { UserIDInput } from "../../components/form/UserID";
 import { SubmitBtn } from "../../components/form/SubmitBtn";
 import { useUserStore } from "../../stores/userStore";
+import styles from "./Form.module.scss";
 
 export default function User_Login() {
   const navigate = useNavigate();
@@ -32,12 +33,13 @@ export default function User_Login() {
   }
   return (
     <>
-      <form onSubmit={submit}>
-        <UserIDInput label="ユーザーID 半角英数字3~16字" name="user_id" />
-        <PasswordInput label="パスワード 8~32バイト" name="password" />
+      <h1>ログイン</h1>
+      <form onSubmit={submit} className={styles.form}>
+        <UserIDInput label="ユーザーID" name="user_id" />
+        <PasswordInput label="パスワード" name="password" />
         <SubmitBtn label="ログイン" />
+        <Link to="/user/new">新規登録</Link>
       </form>
-      <Link to="/user/new">新規登録</Link>
     </>
   );
 }
