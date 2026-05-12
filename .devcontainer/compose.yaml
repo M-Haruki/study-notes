@@ -7,11 +7,10 @@ services:
     volumes:
       - ..:/workspace:cached
       - f-node_modules:/workspace/frontend/node_modules
-      - pgdata:/var/lib/postgresql/data
+      - b-go_mod:/go/pkg/mod
     command: sleep infinity
     environment:
       - NODE_ENV=development
-      - POSTGRES_PASSWORD=pass
     stdin_open: true
     tty: true
 
@@ -27,4 +26,5 @@ services:
       
 volumes:
   f-node_modules:
+  b-go_mod:
   pgdata:
