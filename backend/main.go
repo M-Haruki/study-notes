@@ -87,10 +87,11 @@ func main() {
 
 	// frotend
 	g.GET("*", func(c *echo.Context) error {
-		path := "./dist" + c.Param("*")
+		path := "dist" + c.Param("*")
 		path = strings.TrimRight(path, "/")
-		if _, err := os.Stat(path); err == nil {
-			return c.File(path)
+		fileInfo, err := os.Stat(path)
+		if err == nil && !fileInfo.IsDir() {
+			return c.File(path) // c.Fileで絶対パス指定は、環境によってうまくいかないので避ける
 		}
 		return c.File("dist/index.html")
 	})
