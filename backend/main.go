@@ -55,7 +55,9 @@ func main() {
 	e := echo.New()
 	e.Pre(middle_addSlashToTopPath)
 	e.Pre(middleware.RemoveTrailingSlash())
-	// e.Use(middleware.Recover())
+	if AppConfig.IsProduction {
+		e.Use(middleware.Recover())
+	}
 
 	// db
 	db, err := newDB()
