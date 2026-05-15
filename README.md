@@ -43,7 +43,11 @@ go run .
 
 [http://localhost:1323/study-notes/](http://localhost:1323/study-notes/)からページを見られます。
 
-## ビルド
+## 利用方法
+本アプリはDockerを用いてホストできます。
+
+本リポジトリに含まれる[.env](.env),[.env.local.template](.env.local.template),[compose.yaml](compose.yaml)を、同一ディレクトリに用意してください。
+
 必要に応じて[.env](.env)を書き換えます。  
 `APP_PORT`は、Docker Composeでホスト側に公開するポートです。アプリ本体はコンテナ内の 1323 番で待ち受けます。  
 なお、Composeではホスト側のバインドを`127.0.0.1`にしているため、外部からは直接アクセスできず、ローカルからのみ接続できます。
@@ -54,9 +58,4 @@ go run .
 PostgreSQLコンテナも一緒に立ち上げられるため、すでにあるPostgreSQLなどを使いたい場合は[compose.yaml](compose.yaml)を編集してください。
 ```shell
 docker compose --env-file .env --env-file .env.local up
-```
-
-なお、代わりに次のコマンドでリビルドします。
-```shell
-docker compose --env-file .env --env-file .env.local up --build
 ```
