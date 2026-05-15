@@ -21,7 +21,6 @@ type Config struct {
 	ContextUserIDKey string
 	IsProduction     bool
 	DatabaseURL      string
-	ServerAddress    string
 }
 
 var AppConfig Config
@@ -39,9 +38,8 @@ func main() {
 		JwtExpires:       24 * time.Hour,
 		JwtSecret:        os.Getenv("JWT_SECRET"),
 		DatabaseURL:      os.Getenv("DATABASE_URL"),
-		ServerAddress:    os.Getenv("SERVER_ADDRESS"),
 	}
-	if AppConfig.JwtSecret == "" || AppConfig.DatabaseURL == "" || AppConfig.ServerAddress == "" {
+	if AppConfig.JwtSecret == "" || AppConfig.DatabaseURL == "" {
 		log.Fatal("Invalid Environment")
 	}
 	switch os.Getenv("ENV") {
@@ -96,7 +94,7 @@ func main() {
 	})
 
 	// run server
-	if err := e.Start(AppConfig.ServerAddress); err != nil {
+	if err := e.Start(":1323"); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
 }

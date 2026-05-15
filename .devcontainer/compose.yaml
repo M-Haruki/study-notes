@@ -13,8 +13,7 @@ services:
       - NODE_ENV=development
       - JWT_SECRET=nuk6NeWYEaXWMNmeHG80KbjfubFF0dxywEdks50XFwjjJJMTjx
       - ENV=development
-      - DATABASE_URL=postgresql://postgres:pass@postgres:5432/study_notes?sslmode=disable
-      - SERVER_ADDRESS=:1323
+      - DATABASE_URL=postgres://postgres:pass@postgres:5432/study_notes?sslmode=disable
     stdin_open: true
     tty: true
 
