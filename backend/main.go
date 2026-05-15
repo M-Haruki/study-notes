@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
@@ -21,6 +20,7 @@ type Config struct {
 	JwtExpires       time.Duration
 	ContextUserIDKey string
 	IsProduction     bool
+	DatabaseURL      string
 }
 
 var AppConfig Config
@@ -32,20 +32,15 @@ type JwtClaims struct {
 
 func main() {
 	// env
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(".env not found")
-	}
 	AppConfig = Config{
 		JwtCookieName:    "token",
 		ContextUserIDKey: "ContextUserIDKey",
 		JwtExpires:       24 * time.Hour,
 		JwtSecret:        os.Getenv("JWT_SECRET"),
+		DatabaseURL:      os.Getenv("DATABASE_URL"),
 	}
-	if AppConfig.JwtSecret == "" {
-		log.Fatal("JWT_SECRET is empty")
-	}
-	if os.Getenv("ENV") == "development" {
-		AppConfig.IsProduction = false
+	if AppConfig.JwtSecret == "" || AppConfig.DatabaseURL == "" {
+		log.Fatal("Invalid Environment")
 	}
 	switch os.Getenv("ENV") {
 	case "production":
@@ -60,7 +55,9 @@ func main() {
 	e := echo.New()
 	e.Pre(middle_addSlashToTopPath)
 	e.Pre(middleware.RemoveTrailingSlash())
-	// e.Use(middleware.Recover())
+	if AppConfig.IsProduction {
+		e.Use(middleware.Recover())
+	}
 
 	// db
 	db, err := newDB()
@@ -90,10 +87,11 @@ func main() {
 
 	// frotend
 	g.GET("*", func(c *echo.Context) error {
-		path := "./dist" + c.Param("*")
+		path := "dist" + c.Param("*")
 		path = strings.TrimRight(path, "/")
-		if _, err := os.Stat(path); err == nil {
-			return c.File(path)
+		fileInfo, err := os.Stat(path)
+		if err == nil && !fileInfo.IsDir() {
+			return c.File(path) // c.Fileで絶対パス指定は、環境によってうまくいかないので避ける
 		}
 		return c.File("dist/index.html")
 	})

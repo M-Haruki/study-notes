@@ -1,0 +1,27 @@
+# Node / frontend
+frontend/node_modules
+frontend/dist
+
+# Go / backend build artifacts
+backend/*.exe
+backend/*.out
+backend/app
+
+# Repo-wide
+node_modules
+dist
+.env
+.env.local
+.git
+.gitignore
+README.md
+
+# IDE / OS
+.vscode
+.idea
+*.swp
+.DS_Store
+*.log
+coverage
+tmp
+**/RestClient
