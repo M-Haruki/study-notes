@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/M-Haruki/study-notes:latest
+    image: ghcr.io/m-haruki/study-notes:latest
     environment:
       ENV: production
       JWT_SECRET: ${JWT_SECRET:?required}
