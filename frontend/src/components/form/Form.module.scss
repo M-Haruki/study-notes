@@ -1,0 +1,32 @@
+.input {
+  width: 100%;
+  label {
+    display: block;
+    font-size: 1.2rem;
+  }
+  input {
+    display: block;
+    font-size: 1.4rem;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--color-sub);
+    color: var(--color-body);
+    width: 100%;
+  }
+}
+.btn {
+  width: 100%;
+  display: flex;
+  button {
+    width: 50%;
+    margin: 0 auto;
+    font-size: 1.2rem;
+    padding: 5px;
+    background-color: var(--color-main);
+    border-radius: 10px;
+    border: none;
+    &:hover {
+      background-color: var(--color-sub);
+    }
+  }
+}

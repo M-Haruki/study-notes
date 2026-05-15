@@ -4,14 +4,27 @@
   "service": "app",
   "workspaceFolder": "/workspace",
 
-  "forwardPorts": [5173, 8080],
+  "forwardPorts": [5173, 1323],
+  "portsAttributes": {
+    "5173": {
+      "label": "node vite",
+      "onAutoForward": "openBrowser"
+    },
+    "1323": {
+      "label": "go echo",
+      "onAutoForward": "openBrowser"
+    }
+  },
 
   "customizations": {
     "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "clinyong.vscode-css-modules"
+        "clinyong.vscode-css-modules",
+        "golang.go",
+        "humao.rest-client",
+        "github.vscode-github-actions"
       ]
     }
   }

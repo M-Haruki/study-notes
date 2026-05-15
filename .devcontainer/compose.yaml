@@ -7,11 +7,25 @@ services:
     volumes:
       - ..:/workspace:cached
       - f-node_modules:/workspace/frontend/node_modules
+      - b-go_mod:/root/go/pkg/mod
     command: sleep infinity
     environment:
       - NODE_ENV=development
+      - JWT_SECRET=nuk6NeWYEaXWMNmeHG80KbjfubFF0dxywEdks50XFwjjJJMTjx
+      - ENV=development
+      - DATABASE_URL=postgres://postgres:pass@postgres:5432/study_notes?sslmode=disable
     stdin_open: true
     tty: true
 
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=study_notes
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      
 volumes:
- f-node_modules:
+  f-node_modules:
+  b-go_mod:
+  pgdata:
