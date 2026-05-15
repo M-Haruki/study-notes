@@ -1,6 +1,11 @@
 # study-notes
 
-simple notes app for studying react &amp; go
+simple notes app for studying react &amp; go  
+ReactとGoの勉強用に作ったシンプルなノートアプリ
+
+## 注意事項
+本アプリは開発の学習用途で作成されました。  
+実使用を想定したアプリではないため、お試し程度のご利用にお留めください。
 
 ## 開発環境構築
 ### Dev Container環境の構築
@@ -46,7 +51,7 @@ go run .
 ## 利用方法
 本アプリはDockerを用いてホストできます。
 
-本リポジトリに含まれる[.env](.env),[.env.local.template](.env.local.template),[compose.yaml](compose.yaml)を、同一ディレクトリに用意してください。
+本リポジトリに含まれる[.env](.env), [.env.local.template](.env.local.template), [compose.yaml](compose.yaml)を、同一ディレクトリに用意してください。
 
 必要に応じて[.env](.env)を書き換えます。  
 `APP_PORT`は、Docker Composeでホスト側に公開するポートです。アプリ本体はコンテナ内の 1323 番で待ち受けます。  
