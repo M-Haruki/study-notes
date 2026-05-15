@@ -5,19 +5,19 @@ services:
       dockerfile: Dockerfile
     environment:
       ENV: production
-      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
-      DATABASE_URL: postgres://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:?POSTGRES_DB is required}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?required}
+      DATABASE_URL: postgres://${POSTGRES_USER:?required}:${POSTGRES_PASSWORD:?required}@postgres:5432/${POSTGRES_DB:?required}?sslmode=disable
     ports:
-      - "127.0.0.1:${APP_PORT:?APP_PORT is required}:1323"
+      - "127.0.0.1:${APP_PORT:?required}:1323"
     depends_on:
       - postgres
     
   postgres:
     image: postgres:16-trixie
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
-      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?required}
+      POSTGRES_USER: ${POSTGRES_USER:?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
     volumes:
       - pgdata:/var/lib/postgresql/data
       
