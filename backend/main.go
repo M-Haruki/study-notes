@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
@@ -21,6 +20,7 @@ type Config struct {
 	JwtExpires       time.Duration
 	ContextUserIDKey string
 	IsProduction     bool
+	DatabaseURL      string
 }
 
 var AppConfig Config
@@ -32,20 +32,15 @@ type JwtClaims struct {
 
 func main() {
 	// env
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(".env not found")
-	}
 	AppConfig = Config{
 		JwtCookieName:    "token",
 		ContextUserIDKey: "ContextUserIDKey",
 		JwtExpires:       24 * time.Hour,
 		JwtSecret:        os.Getenv("JWT_SECRET"),
+		DatabaseURL:      os.Getenv("DATABASE_URL"),
 	}
-	if AppConfig.JwtSecret == "" {
-		log.Fatal("JWT_SECRET is empty")
-	}
-	if os.Getenv("ENV") == "development" {
-		AppConfig.IsProduction = false
+	if AppConfig.JwtSecret == "" || AppConfig.DatabaseURL == "" {
+		log.Fatal("Invalid Environment")
 	}
 	switch os.Getenv("ENV") {
 	case "production":

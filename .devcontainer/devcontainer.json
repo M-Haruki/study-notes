@@ -5,6 +5,16 @@
   "workspaceFolder": "/workspace",
 
   "forwardPorts": [5173, 1323],
+  "portsAttributes": {
+    "5173": {
+      "label": "node vite",
+      "onAutoForward": "openBrowser"
+    },
+    "1323": {
+      "label": "go echo",
+      "onAutoForward": "openBrowser"
+    }
+  },
 
   "customizations": {
     "vscode": {

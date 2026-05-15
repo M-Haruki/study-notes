@@ -11,7 +11,7 @@ import (
 )
 
 func newDB() (*sqlx.DB, error) {
-	return sqlx.Connect("postgres", "user=postgres password=pass dbname=study-notes sslmode=disable host=postgres port=5432")
+	return sqlx.Connect("postgres", AppConfig.DatabaseURL)
 }
 
 func setupDatabase(ctx context.Context, db *sqlx.DB) error {
